@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet"
+          href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.css' %}">
+
+{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">新建员工</h3>
+        </div>
+        <div class="panel-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label>{{ field.label }}:</label>{{ field }}
+                        <span style="color: red">{{ field.errors }}</span>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">提 交</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script>
+        // $('#datetime').datetimepicker({
+        //     language: 'zh-CN', //显示中文
+        //     format: 'yyyy-mm-dd', //显示格式
+        //     autoclose: true, //选中自动关闭
+        //     todayBtn: true, //显示今日按钮
+        //     todayHighlight: true, // 今日高亮显示
+        //     // weekStart: 1, //一周从哪一天开始。0（星期日）到6（星期六）
+        //     // startDate: "1970-1-1", //日期选取的起始时间
+        //     minView: "month", // 最小视图为月份，如果为 day 的话还会让你选小时
+        //     daysOfWeekDisabled: '0', // 哪天不可选 0（星期日）到6（星期六）
+        //     endDate: new Date(), //日期选取的截止时间，因为入职日期最多填写到今天，所以可以直接用new Date()，表示当天
+        //     pickerPosition: 'bottom-left', //显示位置
+        //     位置遮挡修改源码:bootstrap-datetimepicker.js中的place函数top = top - containerOffset.top加偏移数量
+        // })
+        $(function () {
+            $('#id_create_date').datepicker({
+                {#minView: 'month',#}
+                autoclose: true,
+                language: 'zh-CN',
+                format: 'yyyy-mm-dd',
+                {#daysOfWeekDisabled: '0', //周末不允许选择#}
+                endDate: new Date(),
+                clearBtn: true, //清除按钮
+                {#pickerPosition: 'top-left',#}
+            })
+        })
+
+    </script>
+{% endblock %}

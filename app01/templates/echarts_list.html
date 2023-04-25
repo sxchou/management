@@ -1,0 +1,222 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">折线图</div>
+            <div class="panel-body">
+                <div id="main2" style="width: 100%;height:300px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">柱状图</div>
+                <div class="panel-body">
+                    <div id="main" style="width: 100%;height:300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">饼图</div>
+                <div class="panel-body">
+                    <div id="main1" style="width: 100%;height:300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/echarts.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            initBar();
+            initPie();
+            initLine();
+        })
+
+        function initBar() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '员工业绩汇总信息',
+                    textAlign: 'auto',
+                    right: 'center',
+                },
+                tooltip: {},
+                legend: {
+                    data: [],
+                    bottom: 0
+                },
+                xAxis: {
+                    data: []
+                },
+                yAxis: {},
+                series: []
+            };
+
+            $.ajax({
+                url: "/echarts/bar/",
+                type: "get",
+                datatype: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        option.legend.data = res.data.legend_data;
+                        option.xAxis.data = res.data.x_axis_data;
+                        option.series = res.data.series_data;
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    }
+                }
+            })
+
+
+        }
+
+        function initPie() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main1'));
+            var option = {
+                title:{
+                    text: '部门预算占比',
+                    textAlign: 'auto',
+                    right: 'center',
+                },
+                legend: {
+                    top: 'bottom'
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: {show: true},
+                        dataView: {show: true, readOnly: false},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                series: [
+                    {
+                        name: 'Nightingale Chart',
+                        type: 'pie',
+                        radius: [20, 90],
+                        center: ['50%', '50%'],
+                        roseType: 'area',
+                        itemStyle: {
+                            borderRadius: 8
+                        },
+                        data: []
+                    }
+                ]
+            };
+
+            $.ajax({
+                url: '/echarts/pie/',
+                type: 'get',
+                datatype: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        option.series[0].data = res.data
+                        // 指定图表的配置项和数据
+                        myChart.setOption(option);
+                    }
+                }
+            })
+
+
+        }
+
+        function initLine() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main2'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '未来一周气温变化',
+                    textAlign: 'auto',
+                    right: 'center',
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {top: 'bottom'},
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} °C'
+                    }
+                },
+                series: [
+                    {
+                        name: '最高温',
+                        type: 'line',
+                        data: [10, 11, 13, 11, 12, 12, 9],
+                        markPoint: {
+                            data: [
+                                {type: 'max', name: 'Max'},
+                                {type: 'min', name: 'Min'}
+                            ]
+                        },
+                        markLine: {
+                            data: [{type: 'average', name: 'Avg'}]
+                        }
+                    },
+                    {
+                        name: '最低温',
+                        type: 'line',
+                        data: [1, -2, 2, 5, 3, 2, 0],
+                        markPoint: {
+                            data: [{name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}]
+                        },
+                        markLine: {
+                            data: [
+                                {type: 'average', name: 'Avg'},
+                                [
+                                    {
+                                        symbol: 'none',
+                                        x: '90%',
+                                        yAxis: 'max'
+                                    },
+                                    {
+                                        symbol: 'circle',
+                                        label: {
+                                            position: 'start',
+                                            formatter: 'Max'
+                                        },
+                                        type: 'max',
+                                        name: '最高点'
+                                    }
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+
+    </script>
+{% endblock %}

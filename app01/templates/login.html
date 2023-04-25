@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}">
+    <style>
+        .login {
+            width: 300px;
+            border: 1px solid #dddddd;
+            margin: 50px auto 0;
+            border-radius: 10px;
+        }
+
+        .login h1 {
+            text-align: center;
+        }
+
+        .login form {
+            margin: 30px 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login">
+    <h1>用户登录</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label>用户名:</label>
+            {{ form.username }}
+            <span style="color: red">{{ form.username.errors }}</span>
+        </div>
+        <div class="form-group">
+            <label>密 码:</label>
+            {{ form.password }}
+            <span style="color: red">{{ form.password.errors }}</span>
+        </div>
+        <div class="form-group">
+            <label for="id_code">图片验证码</label>
+            <div class="row">
+                <div class="col-xs-7">
+                    {{ form.code }}
+                    <span style="color: red;">{{ form.code.errors }}</span>
+                </div>
+                <div class="col-xs-5">
+                    <img id="image_code" src="/image/code/" style="width: 90px;height: 30px">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">登录</button>
+    </form>
+</div>
+</body>
+</html>
+
